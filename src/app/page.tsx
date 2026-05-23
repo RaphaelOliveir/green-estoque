@@ -1,7 +1,6 @@
+import { LoginPage } from '@/features/auth';
+
 export default function Home() {
-  return (
-    <main>
-      <div>Hello world!</div>
-    </main>
-  );
+  return <LoginPage />;
 }
+
