@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './LoginForm.module.css';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export function LoginForm() {
   return (
@@ -53,7 +54,7 @@ export function LoginForm() {
 
       <div className={styles.footerRow}>
         <span className={styles.footerText}>Não tem uma conta?</span>
-        <a href="#" className={styles.registerLink}>Cadastre-se</a>
+        <Link href="/register" className={styles.registerLink}>Cadastre-se</Link>
       </div>
     </div>
   );
