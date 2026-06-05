@@ -21,6 +21,9 @@ export const ROUTES = {
 
   /** Dashboard principal (pós-login) */
   DASHBOARD: '/dashboard',
+
+  /** Página de produtos */
+  PRODUCTS: '/products',
 } as const;
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];
