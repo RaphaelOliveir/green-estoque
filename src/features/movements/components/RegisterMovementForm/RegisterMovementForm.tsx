@@ -58,12 +58,14 @@ function TextInput({
   value,
   onChange,
   type = 'text',
+  step,
 }: {
   id: string;
   placeholder: string;
   value: string;
   onChange: (v: string) => void;
   type?: string;
+  step?: string;
 }) {
   return (
     <input
@@ -72,6 +74,7 @@ function TextInput({
       placeholder={placeholder}
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      step={step}
       className="h-11 w-full rounded-lg border border-[#D0D5DD] bg-white px-3.5 text-base text-[#48505E] shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] outline-none placeholder:text-[#858D9D] transition-colors focus:border-[#1366D9] focus:ring-2 focus:ring-[#1366D9]/10"
     />
   );
