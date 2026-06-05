@@ -5,6 +5,7 @@ import { DisponibilidadeBadge } from '../DisponibilidadeBadge/DisponibilidadeBad
 
 interface ProductsTableProps {
   products: Product[];
+  onAddProduct?: () => void;
 }
 
 function formatCurrency(value: number) {
@@ -65,7 +66,7 @@ const TABLE_HEADERS = [
   { key: 'disponibilidade', label: 'Disponibilidade' },
 ];
 
-export function ProductsTable({ products }: ProductsTableProps) {
+export function ProductsTable({ products, onAddProduct }: ProductsTableProps) {
   return (
     <div className="rounded-lg bg-white">
       {/* Table Header Row */}
@@ -77,6 +78,7 @@ export function ProductsTable({ products }: ProductsTableProps) {
           <button
             type="button"
             id="btn-adicionar-produto"
+            onClick={onAddProduct}
             className="flex h-10 items-center gap-2 rounded bg-[#1366D9] px-4 text-sm font-medium text-white transition-all hover:bg-[#1157B5] active:translate-y-px"
           >
             <PlusIcon />
