@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { SidebarNavItem } from './SidebarNavItem';
 import { ROUTES } from '@/mocked-routes';
@@ -95,13 +96,16 @@ export function Sidebar({ activeItem = 'dashboard' }: SidebarProps) {
       {/* Logo */}
       <div className="px-6 pt-6">
         <div className="flex items-end gap-2">
-          {/* Green leaf/solar icon */}
-          <div className="flex h-[35px] w-[35px] items-center justify-center rounded-md bg-[#E8F4FE]">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="#1570EF" />
-              <path d="M2 17L12 22L22 17" stroke="#1570EF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M2 12L12 17L22 12" stroke="#1570EF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+          {/* Logo icon */}
+          <div className="flex h-[35px] w-[35px] shrink-0 items-center justify-center">
+            <Image
+              src="/images/logo.png"
+              alt="Green Estoque Logo"
+              width={35}
+              height={35}
+              className="object-contain"
+              priority
+            />
           </div>
           <span className="text-xl font-semibold text-[#1570EF]">GREEN ESTOQUE</span>
         </div>
@@ -126,6 +130,7 @@ export function Sidebar({ activeItem = 'dashboard' }: SidebarProps) {
             icon={<TruckIcon />}
             label="Movimentações"
             active={activeItem === 'movimentacoes'}
+            onClick={() => router.push(ROUTES.MOVEMENTS)}
           />
         </div>
       </nav>

@@ -24,6 +24,9 @@ export const ROUTES = {
 
   /** Página de produtos */
   PRODUCTS: '/products',
+
+  /** Página de movimentações */
+  MOVEMENTS: '/movements',
 } as const;
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];
