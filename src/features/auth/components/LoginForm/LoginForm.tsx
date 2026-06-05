@@ -1,8 +1,18 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { MOCK_REDIRECTS } from '@/mocked-routes';
 
 export function LoginForm() {
+  const router = useRouter();
+
+  const handleLogin = () => {
+    router.push(MOCK_REDIRECTS.onLoginSuccess);
+  };
+
   return (
     <div className="flex w-[360px] flex-col gap-6">
       <form className="flex flex-col gap-5">
@@ -36,15 +46,23 @@ export function LoginForm() {
       </div>
 
       <div className="flex flex-col gap-4">
-        <button className="flex h-11 w-full cursor-pointer items-center justify-center rounded border border-primary bg-primary text-base font-medium leading-6 text-white shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] transition-all hover:bg-primary-hover active:translate-y-[1px]" type="button">
+        <button
+          className="flex h-11 w-full cursor-pointer items-center justify-center rounded border border-primary bg-primary text-base font-medium leading-6 text-white shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] transition-all hover:bg-primary-hover active:translate-y-[1px]"
+          type="button"
+          onClick={handleLogin}
+        >
           Entrar
         </button>
-        <button className="flex h-11 w-full cursor-pointer items-center justify-center gap-3 rounded border border-border bg-white shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] transition-all hover:bg-gray-50 active:translate-y-[1px]" type="button">
-          <Image 
-            src="/images/google-icon.svg" 
-            alt="Google logo" 
-            width={24} 
-            height={24} 
+        <button
+          className="flex h-11 w-full cursor-pointer items-center justify-center gap-3 rounded border border-border bg-white shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] transition-all hover:bg-gray-50 active:translate-y-[1px]"
+          type="button"
+          onClick={handleLogin}
+        >
+          <Image
+            src="/images/google-icon.svg"
+            alt="Google logo"
+            width={24}
+            height={24}
             className="block"
           />
           <span className="text-base font-medium leading-6 text-[#383E49]">Continuar com o Google</span>
