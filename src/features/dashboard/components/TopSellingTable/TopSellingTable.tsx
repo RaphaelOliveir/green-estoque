@@ -6,18 +6,26 @@ interface TopSellingTableProps {
   products: TopSellingProduct[];
 }
 
-export function TopSellingTable({ products }: TopSellingTableProps) {
-  const formatCurrency = (value: number) =>
-    `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2,
+  }).format(value);
+}
 
+export function TopSellingTable({ products }: TopSellingTableProps) {
   return (
-    <div className="rounded-[10px] bg-white">
+    <div className="rounded-xl bg-white shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-5">
-        <h2 className="text-xl font-medium text-[#383E49]">Mais vendidos</h2>
+      <div className="flex items-center justify-between px-5 py-4">
+        <div>
+          <h2 className="text-base font-semibold text-[#383E49]">Mais Vendidos</h2>
+          <p className="text-xs text-[#858D9D]">Produtos com maior saída</p>
+        </div>
         <button
           type="button"
-          className="text-sm text-[#0F50AA] hover:underline transition-all"
+          className="text-sm font-medium text-[#1366D9] hover:underline transition-all"
         >
           Ver tudo
         </button>
@@ -27,11 +35,11 @@ export function TopSellingTable({ products }: TopSellingTableProps) {
       <div className="h-px w-full bg-[#F0F1F3]" />
 
       {/* Table header */}
-      <div className="grid grid-cols-4 px-4 py-3">
-        <span className="text-sm font-medium text-[#5D6679]">Nome</span>
-        <span className="text-sm font-medium text-[#5D6679]">Quantidade vendida</span>
-        <span className="text-sm font-medium text-[#5D6679]">Quantidade restante</span>
-        <span className="text-sm font-medium text-[#5D6679]">Preço</span>
+      <div className="grid grid-cols-4 px-5 py-3">
+        <span className="text-xs font-semibold uppercase tracking-wide text-[#858D9D]">Produto</span>
+        <span className="text-xs font-semibold uppercase tracking-wide text-[#858D9D]">Vendidos</span>
+        <span className="text-xs font-semibold uppercase tracking-wide text-[#858D9D]">Fornecedor</span>
+        <span className="text-xs font-semibold uppercase tracking-wide text-[#858D9D]">Preço Unit.</span>
       </div>
 
       {/* Divider */}
@@ -40,11 +48,11 @@ export function TopSellingTable({ products }: TopSellingTableProps) {
       {/* Table rows */}
       {products.map((product, index) => (
         <div key={product.id}>
-          <div className="grid grid-cols-4 px-4 py-5 hover:bg-gray-50 transition-colors">
-            <span className="text-sm font-medium text-[#666666]">{product.nome}</span>
-            <span className="text-sm font-medium text-[#666666]">{product.quantidadeVendida}</span>
-            <span className="text-sm font-medium text-[#666666]">{product.quantidadeRestante}</span>
-            <span className="text-sm font-medium text-[#666666]">{formatCurrency(product.preco)}</span>
+          <div className="grid grid-cols-4 items-center px-5 py-4 hover:bg-[#F9FAFB] transition-colors">
+            <span className="text-sm font-medium text-[#48505E]">{product.nome}</span>
+            <span className="text-sm font-semibold text-[#22C55E]">{product.quantidadeVendida}</span>
+            <span className="text-sm font-medium text-[#48505E]">{product.fornecedor}</span>
+            <span className="text-sm font-medium text-[#48505E]">{formatCurrency(product.preco)}</span>
           </div>
           {index < products.length - 1 && <div className="h-px w-full bg-[#F0F1F3]" />}
         </div>

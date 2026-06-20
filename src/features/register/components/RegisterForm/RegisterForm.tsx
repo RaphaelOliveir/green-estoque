@@ -1,57 +1,113 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useRegisterUserMutation, useLoginMutation } from '@/shared/api/apiSlice';
 
 export function RegisterForm() {
+  const router = useRouter();
+  const [registerMutation, { isLoading: isRegistering }] = useRegisterUserMutation();
+  const [loginMutation, { isLoading: isLoggingIn }] = useLoginMutation();
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const isLoading = isRegistering || isLoggingIn;
+
+  const handleRegister = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    setError('');
+
+    if (!name || !email || !password) {
+      setError('Por favor, preencha todos os campos.');
+      return;
+    }
+
+    try {
+      await registerMutation({ name, email, password }).unwrap();
+      // Auto-login after successful registration
+      const loginResponse = await loginMutation({ email, password }).unwrap();
+      if (loginResponse.access_token) {
+        localStorage.setItem('token', loginResponse.access_token);
+        router.push('/dashboard');
+      } else {
+        router.push('/');
+      }
+    } catch (err: any) {
+      setError(err?.data?.message || 'Erro ao efetuar cadastro. Verifique os dados e tente novamente.');
+    }
+  };
+
   return (
     <div className="flex w-[360px] flex-col gap-6">
-      <form className="flex flex-col gap-5">
+      <form className="flex flex-col gap-5" onSubmit={handleRegister}>
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium leading-5 text-text-secondary" htmlFor="name">Nome*</label>
+          <label className="text-sm font-medium leading-5 text-text-secondary" htmlFor="name">Nome completo</label>
           <div className="flex h-11 w-full items-center rounded-lg border border-border bg-white px-3.5 py-2.5 shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] transition-colors focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10">
             <input 
               className="w-full bg-transparent text-base leading-6 text-text-main outline-none placeholder:text-text-muted" 
               type="text" 
               id="name" 
-              placeholder="Digite seu nome" 
+              placeholder="Digite seu nome completo"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              disabled={isLoading}
             />
           </div>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium leading-5 text-text-secondary" htmlFor="email">E-mail*</label>
+          <label className="text-sm font-medium leading-5 text-text-secondary" htmlFor="email">E-mail</label>
           <div className="flex h-11 w-full items-center rounded-lg border border-border bg-white px-3.5 py-2.5 shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] transition-colors focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10">
             <input 
               className="w-full bg-transparent text-base leading-6 text-text-main outline-none placeholder:text-text-muted" 
               type="email" 
               id="email" 
-              placeholder="Digite seu e-mail" 
+              placeholder="Digite seu e-mail"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              disabled={isLoading}
             />
           </div>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium leading-5 text-text-secondary" htmlFor="password">Senha*</label>
+          <label className="text-sm font-medium leading-5 text-text-secondary" htmlFor="password">Senha</label>
           <div className="flex h-11 w-full items-center rounded-lg border border-border bg-white px-3.5 py-2.5 shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] transition-colors focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10">
             <input 
               className="w-full bg-transparent text-base leading-6 text-text-main outline-none placeholder:text-text-muted" 
               type="password" 
               id="password" 
-              placeholder="Digite sua senha" 
+              placeholder="••••••••"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              disabled={isLoading}
             />
           </div>
-          <span className="mt-0.5 text-sm leading-5 text-text-muted">Deve ter no minímo 8 caracteres</span>
+          <p className="mt-1 text-sm text-text-muted">A senha deve ter no mínimo 8 caracteres.</p>
         </div>
+        
+        {error && <span className="text-sm text-red-500">{error}</span>}
+        <button type="submit" className="hidden" />
       </form>
 
       <div className="flex flex-col">
-        <button className="flex h-11 w-full cursor-pointer items-center justify-center rounded-lg border border-primary bg-primary text-base font-medium leading-6 text-white shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] transition-all hover:bg-primary-hover active:translate-y-[1px]" type="button">
-          Cadastrar
+        <button 
+          className="flex h-11 w-full cursor-pointer items-center justify-center rounded-lg border border-primary bg-primary text-base font-medium leading-6 text-white shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] transition-all hover:bg-primary-hover active:translate-y-[1px] disabled:opacity-50" 
+          type="button"
+          onClick={handleRegister}
+          disabled={isLoading}
+        >
+          {isLoading ? 'Cadastrando...' : 'Cadastrar'}
         </button>
       </div>
 
       <div className="flex w-full items-center justify-center gap-1">
         <span className="text-sm leading-5 text-text-muted">Já tem uma conta?</span>
-        <Link href="/" className="text-sm font-medium leading-5 text-[#0F50AA] transition-colors hover:text-[#0b3d82]">Fazer login</Link>
+        <Link href="/" className="text-sm font-medium leading-5 text-primary transition-colors hover:text-primary-hover">Faça login</Link>
       </div>
     </div>
   );

@@ -1,31 +1,42 @@
 'use client';
 
 import { useState } from 'react';
+import type { MovementStatus } from '../../types/movements.types';
+import { ImageUpload } from '@/features/products/components/ImageUpload/ImageUpload';
 
 export interface RegisterMovementFormData {
   produto: string;
-  idPedido: string;
-  valorPedido: string;
-  quantidade: string;
-  dataEntrega: string;
-  status: string;
+  valor: string;
+  dataEntrada: string;
+  comprador: string;
+  descricao: string;
+  fornecedor: string;
+  tipo: 'Painel Solar' | 'Inversor' | 'Estrutura' | '';
+  status: MovementStatus;
+  imagem: File | null;
 }
 
 const INITIAL_FORM: RegisterMovementFormData = {
   produto: '',
-  idPedido: '',
-  valorPedido: '',
-  quantidade: '',
-  dataEntrega: '',
-  status: 'Confirmado',
+  valor: '',
+  dataEntrada: '',
+  comprador: '',
+  descricao: '',
+  fornecedor: '',
+  tipo: '',
+  status: 'IN_STOCK',
+  imagem: null,
 };
 
 const STATUS_OPTIONS = [
-  'Confirmado',
-  'Em atraso',
-  'Devolvido',
-  'Entregue',
-  'Retornado',
+  { value: 'IN_STOCK', label: 'Em estoque' },
+  { value: 'INSTALLED', label: 'Instalado' },
+];
+
+const TYPE_OPTIONS = [
+  'Painel Solar',
+  'Inversor',
+  'Estrutura',
 ];
 
 interface RegisterMovementFormProps {
@@ -86,7 +97,7 @@ export function RegisterMovementForm({
 }: RegisterMovementFormProps) {
   const [form, setForm] = useState<RegisterMovementFormData>(INITIAL_FORM);
 
-  const set = (key: keyof RegisterMovementFormData) => (value: string) =>
+  const set = (key: keyof RegisterMovementFormData) => (value: string | File | null) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -97,56 +108,85 @@ export function RegisterMovementForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       {/* Title */}
-      <h2 className="text-xl font-medium text-[#383E49]">Novo pedido</h2>
+      <h2 className="text-xl font-medium text-[#383E49]">Nova Movimentação</h2>
+
+      {/* Image upload */}
+      <ImageUpload onChange={(file) => setForm((prev) => ({ ...prev, imagem: file }))} />
 
       {/* Fields */}
       <div className="flex flex-col gap-5 mt-2">
         <FieldRow label="Produto">
           <TextInput
             id="register-mov-produto"
-            placeholder="Nome ou código do produto"
+            placeholder="Nome do produto"
             value={form.produto}
             onChange={set('produto')}
           />
         </FieldRow>
 
-        <FieldRow label="ID do pedido">
+        <FieldRow label="Descrição">
           <TextInput
-            id="register-mov-id"
-            placeholder="Ex: 7535"
-            value={form.idPedido}
-            onChange={set('idPedido')}
+            id="register-mov-descricao"
+            placeholder="Breve descrição"
+            value={form.descricao}
+            onChange={set('descricao')}
           />
         </FieldRow>
 
-        <FieldRow label="Valor do pedido">
+        <FieldRow label="Tipo">
+          <select
+            id="register-mov-tipo"
+            value={form.tipo}
+            onChange={(e) => set('tipo')(e.target.value)}
+            className="h-11 w-full rounded-lg border border-[#D0D5DD] bg-white px-3.5 text-base text-[#48505E] shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] outline-none transition-colors focus:border-[#1366D9] focus:ring-2 focus:ring-[#1366D9]/10 appearance-none"
+          >
+            <option value="" disabled hidden>
+              Selecionar tipo do produto
+            </option>
+            {TYPE_OPTIONS.map((tipo) => (
+              <option key={tipo} value={tipo}>
+                {tipo}
+              </option>
+            ))}
+          </select>
+        </FieldRow>
+
+        <FieldRow label="Valor">
           <TextInput
             id="register-mov-valor"
             placeholder="Ex: 250,00"
-            value={form.valorPedido}
-            onChange={set('valorPedido')}
+            value={form.valor}
+            onChange={set('valor')}
             type="number"
             step="0.01"
           />
         </FieldRow>
 
-        <FieldRow label="Quantidade">
+        <FieldRow label="Comprador">
           <TextInput
-            id="register-mov-quantidade"
-            placeholder="Quantidade"
-            value={form.quantidade}
-            onChange={set('quantidade')}
-            type="number"
+            id="register-mov-comprador"
+            placeholder="Nome do comprador"
+            value={form.comprador}
+            onChange={set('comprador')}
           />
         </FieldRow>
 
-        <FieldRow label="Data de entrega">
+        <FieldRow label="Data de Entrada">
           <TextInput
             id="register-mov-data"
-            placeholder="Data de entrega"
-            value={form.dataEntrega}
-            onChange={set('dataEntrega')}
+            placeholder="Data de entrada"
+            value={form.dataEntrada}
+            onChange={set('dataEntrada')}
             type="date"
+          />
+        </FieldRow>
+
+        <FieldRow label="Fornecedor">
+          <TextInput
+            id="register-mov-fornecedor"
+            placeholder="Nome do fornecedor"
+            value={form.fornecedor}
+            onChange={set('fornecedor')}
           />
         </FieldRow>
 
@@ -158,8 +198,8 @@ export function RegisterMovementForm({
             className="h-11 w-full rounded-lg border border-[#D0D5DD] bg-white px-3.5 text-base text-[#48505E] shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] outline-none transition-colors focus:border-[#1366D9] focus:ring-2 focus:ring-[#1366D9]/10 appearance-none"
           >
             {STATUS_OPTIONS.map((st) => (
-              <option key={st} value={st}>
-                {st}
+              <option key={st.value} value={st.value}>
+                {st.label}
               </option>
             ))}
           </select>
@@ -185,3 +225,4 @@ export function RegisterMovementForm({
     </form>
   );
 }
+

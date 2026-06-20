@@ -7,6 +7,9 @@ import type {
   LowStockProduct,
   ChartDataPoint,
   OrderChartDataPoint,
+  StockOverview,
+  ProductTypeBreakdown,
+  StockMovementDataPoint,
 } from '../types';
 
 export const salesOverviewData: SalesOverview = {
@@ -34,14 +37,16 @@ export const productSummaryData: ProductSummary = {
 };
 
 export const topSellingProducts: TopSellingProduct[] = [
-  { id: '1', nome: 'Placa 1', quantidadeVendida: 30, quantidadeRestante: 12, preco: 2500 },
-  { id: '2', nome: 'Placa 2', quantidadeVendida: 21, quantidadeRestante: 15, preco: 2742 },
-  { id: '3', nome: 'Placa 3', quantidadeVendida: 19, quantidadeRestante: 17, preco: 3569.12 },
+  { id: '1', nome: 'Painel Solar 340W', quantidadeVendida: 30, fornecedor: 'SolarTech', preco: 850 },
+  { id: '2', nome: 'Inversor Solar 5kW', quantidadeVendida: 21, fornecedor: 'PowerInv', preco: 3200 },
+  { id: '3', nome: 'Estrutura Alumínio', quantidadeVendida: 15, fornecedor: 'EstruturaPro', preco: 420 },
+  { id: '4', nome: 'Painel Solar 400W', quantidadeVendida: 12, fornecedor: 'SolarTech', preco: 1100 },
+  { id: '5', nome: 'Inversor Micro 250W', quantidadeVendida: 9, fornecedor: 'PowerInv', preco: 780 },
 ];
 
 export const lowStockProducts: LowStockProduct[] = [
   { id: '1', nome: 'Painel Solar 340W', quantidadeRestante: 10, status: 'Baixo' },
-  { id: '2', nome: 'Kit De Painel Solar', quantidadeRestante: 15, status: 'Baixo' },
+  { id: '2', nome: 'Estrutura Metálica Solo', quantidadeRestante: 5, status: 'Crítico' },
   { id: '3', nome: 'Inversor Solar 5kW', quantidadeRestante: 8, status: 'Baixo' },
 ];
 
@@ -52,16 +57,33 @@ export const chartData: ChartDataPoint[] = [
   { month: 'Abr', compras: 50000, vendas: 42000 },
   { month: 'Mai', compras: 45000, vendas: 55000 },
   { month: 'Jun', compras: 30000, vendas: 48000 },
-  { month: 'Jul', compras: 55000, vendas: 40000 },
-  { month: 'Ago', compras: 48000, vendas: 52000 },
-  { month: 'Set', compras: 40000, vendas: 35000 },
-  { month: 'Out', compras: 52000, vendas: 58000 },
 ];
 
 export const orderChartData: OrderChartDataPoint[] = [
-  { month: 'Jan', pedidos: 2500, entregues: 3200 },
-  { month: 'Fev', pedidos: 3000, entregues: 2800 },
-  { month: 'Mar', pedidos: 2200, entregues: 3500 },
-  { month: 'Abr', pedidos: 3800, entregues: 2600 },
-  { month: 'Mai', pedidos: 3200, entregues: 3900 },
+  { month: 'Jan', pedidos: 25, entregues: 20 },
+  { month: 'Fev', pedidos: 30, entregues: 28 },
+  { month: 'Mar', pedidos: 22, entregues: 35 },
+  { month: 'Abr', pedidos: 38, entregues: 26 },
+  { month: 'Mai', pedidos: 32, entregues: 39 },
+];
+
+// New dashboard data
+export const stockOverviewData: StockOverview = {
+  emEstoque: 8,
+  instalados: 2,
+};
+
+export const productTypeBreakdownData: ProductTypeBreakdown = {
+  painelSolar: 5,
+  inversor: 3,
+  estrutura: 2,
+};
+
+export const stockMovementData: StockMovementDataPoint[] = [
+  { month: 'Jan', entradas: 15, saidas: 8 },
+  { month: 'Fev', entradas: 20, saidas: 12 },
+  { month: 'Mar', entradas: 18, saidas: 10 },
+  { month: 'Abr', entradas: 25, saidas: 15 },
+  { month: 'Mai', entradas: 22, saidas: 18 },
+  { month: 'Jun', entradas: 30, saidas: 20 },
 ];

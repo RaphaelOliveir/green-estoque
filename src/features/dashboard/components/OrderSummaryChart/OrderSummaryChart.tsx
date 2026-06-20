@@ -11,7 +11,7 @@ export function OrderSummaryChart({ data }: OrderSummaryChartProps) {
   const chartHeight = 182;
   const chartWidth = 316;
   const yLabels = [4000, 3000, 2000, 1000];
-  const xLabels = data.map((d) => d.month);
+
 
   const getY = (value: number) => chartHeight - (value / maxValue) * chartHeight;
 

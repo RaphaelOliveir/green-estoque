@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { SidebarNavItem } from './SidebarNavItem';
-import { ROUTES } from '@/mocked-routes';
 
 // SVG Icons
 function HomeIcon() {
@@ -91,6 +90,11 @@ interface SidebarProps {
 export function Sidebar({ activeItem = 'dashboard' }: SidebarProps) {
   const router = useRouter();
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    router.push('/');
+  };
+
   return (
     <aside className="flex h-full w-[280px] flex-shrink-0 flex-col border-r border-[#F0F1F3] bg-white">
       {/* Logo */}
@@ -118,19 +122,19 @@ export function Sidebar({ activeItem = 'dashboard' }: SidebarProps) {
             icon={<HomeIcon />}
             label="Dashboard"
             active={activeItem === 'dashboard'}
-            onClick={() => router.push(ROUTES.DASHBOARD)}
+            onClick={() => router.push('/dashboard')}
           />
           <SidebarNavItem
             icon={<BoxIcon />}
             label="Produtos"
             active={activeItem === 'produtos'}
-            onClick={() => router.push(ROUTES.PRODUCTS)}
+            onClick={() => router.push('/products')}
           />
           <SidebarNavItem
             icon={<TruckIcon />}
             label="Movimentações"
             active={activeItem === 'movimentacoes'}
-            onClick={() => router.push(ROUTES.MOVEMENTS)}
+            onClick={() => router.push('/movements')}
           />
         </div>
       </nav>
@@ -146,9 +150,11 @@ export function Sidebar({ activeItem = 'dashboard' }: SidebarProps) {
           <SidebarNavItem
             icon={<LogoutIcon />}
             label="Sair"
+            onClick={handleLogout}
           />
         </div>
       </div>
     </aside>
   );
 }
+

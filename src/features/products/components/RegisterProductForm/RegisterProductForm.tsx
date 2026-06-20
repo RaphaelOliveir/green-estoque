@@ -2,37 +2,36 @@
 
 import { useState } from 'react';
 import { ImageUpload } from '../ImageUpload/ImageUpload';
+import type { ProductType } from '../../types/products.types';
 
 export interface RegisterProductFormData {
   nome: string;
-  idProduto: string;
-  categoria: string;
-  precoCompra: string;
-  quantidade: string;
-  validade: string;
-  valorLimite: string;
+  descricao: string;
+  tipo: ProductType | '';
+  valor: string;
+  comprador: string;
+  dataCompra: string;
+  dataEntrada: string;
+  fornecedor: string;
   imagem: File | null;
 }
 
 const INITIAL_FORM: RegisterProductFormData = {
   nome: '',
-  idProduto: '',
-  categoria: '',
-  precoCompra: '',
-  quantidade: '',
-  validade: '',
-  valorLimite: '',
+  descricao: '',
+  tipo: '',
+  valor: '',
+  comprador: '',
+  dataCompra: '',
+  dataEntrada: '',
+  fornecedor: '',
   imagem: null,
 };
 
-const CATEGORY_OPTIONS = [
-  'Eletrônicos',
-  'Alimentos',
-  'Bebidas',
-  'Limpeza',
-  'Papelaria',
-  'Ferramentas',
-  'Outro',
+const TYPE_OPTIONS: ProductType[] = [
+  'Painel Solar',
+  'Inversor',
+  'Estrutura',
 ];
 
 interface RegisterProductFormProps {
@@ -117,70 +116,68 @@ export function RegisterProductForm({
           />
         </FieldRow>
 
-        <FieldRow label="ID do produto">
+        <FieldRow label="Descrição (opcional)">
           <TextInput
-            id="register-product-id"
-            placeholder="ID do produto"
-            value={form.idProduto}
-            onChange={set('idProduto')}
+            id="register-product-descricao"
+            placeholder="Breve descrição"
+            value={form.descricao}
+            onChange={set('descricao')}
           />
         </FieldRow>
 
-        <FieldRow label="Categoria">
+        <FieldRow label="Tipo">
           <select
-            id="register-product-categoria"
-            value={form.categoria}
-            onChange={(e) => set('categoria')(e.target.value)}
+            id="register-product-tipo"
+            value={form.tipo}
+            onChange={(e) => set('tipo')(e.target.value as ProductType)}
             className="h-11 w-full rounded-lg border border-[#D0D5DD] bg-white px-3.5 text-base text-[#48505E] shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] outline-none transition-colors focus:border-[#1366D9] focus:ring-2 focus:ring-[#1366D9]/10 appearance-none"
           >
             <option value="" disabled hidden>
-              Selecionar categoria do produto
+              Selecionar tipo do produto
             </option>
-            {CATEGORY_OPTIONS.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
+            {TYPE_OPTIONS.map((tipo) => (
+              <option key={tipo} value={tipo}>
+                {tipo}
               </option>
             ))}
           </select>
         </FieldRow>
 
-        <FieldRow label="Preço de compra">
+        <FieldRow label="Valor">
           <TextInput
-            id="register-product-preco"
-            placeholder="Preço de compra"
-            value={form.precoCompra}
-            onChange={set('precoCompra')}
+            id="register-product-valor"
+            placeholder="Valor"
+            value={form.valor}
+            onChange={set('valor')}
             type="number"
           />
         </FieldRow>
 
-        <FieldRow label="Quantidade">
+        <FieldRow label="Comprador">
           <TextInput
-            id="register-product-quantidade"
-            placeholder="Quantidade"
-            value={form.quantidade}
-            onChange={set('quantidade')}
-            type="number"
+            id="register-product-comprador"
+            placeholder="Nome do comprador"
+            value={form.comprador}
+            onChange={set('comprador')}
           />
         </FieldRow>
 
-        <FieldRow label="Validade">
+        <FieldRow label="Data de Compra">
           <TextInput
-            id="register-product-validade"
-            placeholder="Digite a data de validade"
-            value={form.validade}
-            onChange={set('validade')}
+            id="register-product-datacompra"
+            placeholder="Data da compra"
+            value={form.dataCompra}
+            onChange={set('dataCompra')}
             type="date"
           />
         </FieldRow>
 
-        <FieldRow label="Valor limite">
+        <FieldRow label="Fornecedor">
           <TextInput
-            id="register-product-valor-limite"
-            placeholder="Limite de unidades"
-            value={form.valorLimite}
-            onChange={set('valorLimite')}
-            type="number"
+            id="register-product-fornecedor"
+            placeholder="Nome do fornecedor"
+            value={form.fornecedor}
+            onChange={set('fornecedor')}
           />
         </FieldRow>
       </div>

@@ -7,4 +7,7 @@ export type {
   LowStockProduct,
   ChartDataPoint,
   OrderChartDataPoint,
+  StockOverview,
+  ProductTypeBreakdown,
+  StockMovementDataPoint,
 } from './dashboard.types';

@@ -1,3 +1,29 @@
+export interface StockOverview {
+  emEstoque: number;
+  instalados: number;
+}
+
+export interface ProductTypeBreakdown {
+  painelSolar: number;
+  inversor: number;
+  estrutura: number;
+}
+
+export interface TopSellingProduct {
+  id: string;
+  nome: string;
+  quantidadeVendida: number;
+  fornecedor: string;
+  preco: number;
+}
+
+export interface StockMovementDataPoint {
+  month: string;
+  entradas: number;
+  saidas: number;
+}
+
+// Legacy types kept for backward compatibility with existing components
 export interface SalesOverview {
   vendas: number;
   receita: number;
@@ -20,14 +46,6 @@ export interface InventorySummary {
 export interface ProductSummary {
   fornecedores: number;
   categorias: number;
-}
-
-export interface TopSellingProduct {
-  id: string;
-  nome: string;
-  quantidadeVendida: number;
-  quantidadeRestante: number;
-  preco: number;
 }
 
 export interface LowStockProduct {

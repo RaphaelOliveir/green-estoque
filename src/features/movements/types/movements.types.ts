@@ -1,12 +1,16 @@
-export type MovementStatus = 'Confirmado' | 'Em atraso' | 'Devolvido' | 'Entregue';
+export type MovementStatus = 'IN_STOCK' | 'INSTALLED';
 
 export interface Movement {
   id: string;
-  produto: string; // e.g., "Placa 1"
-  valorPedido: number;
-  quantidade: number;
-  idPedido: string;
-  dataEntrega: string; // e.g., "11/12/22"
+  productId: string;
+  produto: string;
+  valor: number;
+  dataEntrada: string;
+  comprador: string;
+  descricao?: string;
+  imagem?: string;
+  fornecedor: string;
+  tipo: 'Painel Solar' | 'Inversor' | 'Estrutura';
   status: MovementStatus;
 }
 
@@ -22,3 +26,4 @@ export interface MovementStats {
   };
   aCaminho: number;
 }
+
