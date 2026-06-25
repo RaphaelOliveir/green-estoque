@@ -17,8 +17,17 @@ function formatCurrency(value: number) {
 
 function formatDate(date: string) {
   if (!date) return '—';
-  const [y, m, d] = date.split('-');
-  return `${d}/${m}/${y}`;
+  try {
+    const dateStr = date.split('T')[0];
+    const parts = dateStr.split('-');
+    if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return date;
+    return new Intl.DateTimeFormat('pt-BR', { timeZone: 'UTC' }).format(d);
+  } catch {
+    return date;
+  }
 }
 
 

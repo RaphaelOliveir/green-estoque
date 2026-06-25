@@ -26,12 +26,14 @@ function formatCurrency(value: number) {
 function formatDate(date: string) {
   if (!date) return '—';
   try {
+    const dateStr = date.split('T')[0];
+    const parts = dateStr.split('-');
+    if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    
     const d = new Date(date);
     if (isNaN(d.getTime())) return date;
-    return new Intl.DateTimeFormat('pt-BR').format(d);
+    return new Intl.DateTimeFormat('pt-BR', { timeZone: 'UTC' }).format(d);
   } catch {
-    const parts = date.split('-');
-    if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
     return date;
   }
 }
