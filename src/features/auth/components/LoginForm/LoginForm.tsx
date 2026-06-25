@@ -36,8 +36,8 @@ export function LoginForm() {
       } else {
         setError('Erro ao efetuar login. Token não recebido.');
       }
-    } catch (err: any) {
-      setError(err?.data?.message || 'E-mail ou senha incorretos.');
+    } catch (err) {
+      setError((err as { data?: { message?: string } })?.data?.message || 'E-mail ou senha incorretos.');
     }
   };
 

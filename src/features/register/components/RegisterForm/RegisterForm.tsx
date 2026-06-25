@@ -42,8 +42,8 @@ export function RegisterForm() {
       } else {
         router.push('/');
       }
-    } catch (err: any) {
-      setError(err?.data?.message || 'Erro ao efetuar cadastro. Verifique os dados e tente novamente.');
+    } catch (err) {
+      setError((err as { data?: { message?: string } })?.data?.message || 'Erro ao efetuar cadastro. Verifique os dados e tente novamente.');
     }
   };
 

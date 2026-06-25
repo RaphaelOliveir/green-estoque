@@ -13,7 +13,7 @@ export function ProductsPage() {
   const { data: productsData, isLoading, isError } = useGetProductsQuery({ page: 1, limit: 100 });
   const [createProduct] = useCreateProductMutation();
 
-  const products = productsData?.data || productsData || [];
+  const products = Array.isArray(productsData) ? productsData : (productsData?.data ?? []);
 
   const handleAddProduct = async (data: RegisterProductFormData) => {
     try {

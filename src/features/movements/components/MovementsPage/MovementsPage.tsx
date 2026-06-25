@@ -7,7 +7,7 @@ import { useGetInventoryUnitsQuery } from '@/shared/api/apiSlice';
 
 export function MovementsPage() {
   const { data: movementsData, isLoading, isError } = useGetInventoryUnitsQuery({ page: 1, limit: 100 });
-  const movements = movementsData?.data || movementsData || [];
+  const movements = Array.isArray(movementsData) ? movementsData : (movementsData?.data ?? []);
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-[#F0F1F3]">

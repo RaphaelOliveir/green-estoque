@@ -7,11 +7,25 @@ import { TopBar } from '@/features/dashboard/components/TopBar/TopBar';
 import { 
   useGetInventoryUnitByIdQuery, 
   useUpdateInventoryUnitStatusMutation,
-  useDeleteProductMutation 
+  useDeleteProductMutation,
+  type InventoryUnit
 } from '@/shared/api/apiSlice';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store/store';
 import type { MovementStatus } from '../../types/movements.types';
+
+// Extends InventoryUnit with optional legacy Portuguese-named fields that some
+// API responses may still return alongside the canonical camelCase names.
+type MovementDetail = InventoryUnit & {
+  produto?: string;
+  tipo?: string;
+  valor?: number;
+  comprador?: string;
+  dataEntrada?: string;
+  fornecedor?: string;
+  descricao?: string;
+  imagem?: string;
+};
 
 interface MovementDetailsPageProps {
   movementId: string;
@@ -45,7 +59,8 @@ export function MovementDetailsPage({ movementId }: MovementDetailsPageProps) {
   const user = useSelector((state: RootState) => state.auth.user);
   const isEngineering = user?.role === 'ENGINEERING';
   
-  const { data: movement, isLoading, isError } = useGetInventoryUnitByIdQuery(movementId);
+  const { data: movementData, isLoading, isError } = useGetInventoryUnitByIdQuery(movementId);
+  const movement = movementData as MovementDetail | undefined;
   const [updateStatusMutation] = useUpdateInventoryUnitStatusMutation();
   const [deleteProductMutation, { isLoading: isDeleting }] = useDeleteProductMutation();
   
@@ -53,9 +68,12 @@ export function MovementDetailsPage({ movementId }: MovementDetailsPageProps) {
   const [status, setStatus] = useState<MovementStatus>('IN_STOCK');
 
   useEffect(() => {
-    if (movement) {
-      setStatus(movement.status === 'EM_ESTOQUE' ? 'IN_STOCK' : movement.status === 'INSTALADO' ? 'INSTALLED' : movement.status || 'IN_STOCK');
-    }
+    const sync = async () => {
+      if (movement) {
+        setStatus(movement.status === 'EM_ESTOQUE' ? 'IN_STOCK' : movement.status === 'INSTALADO' ? 'INSTALLED' : movement.status || 'IN_STOCK');
+      }
+    };
+    sync();
   }, [movement]);
 
   if (isLoading) {
@@ -117,17 +135,17 @@ export function MovementDetailsPage({ movementId }: MovementDetailsPageProps) {
     try {
       await deleteProductMutation(movement.productId).unwrap();
       router.push('/movements');
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to delete product', err);
-      alert(err?.data?.message || 'Erro ao excluir o produto. Verifique se ele não possui unidades instaladas.');
+      alert((err as { data?: { message?: string } })?.data?.message || 'Erro ao excluir o produto. Verifique se ele não possui unidades instaladas.');
     }
   };
 
   const displayNome = movement.name || movement.produto;
   const displayTipo = movement.type === 'SOLAR_PANEL' ? 'Painel Solar' : movement.type === 'INVERTER' ? 'Inversor' : movement.type === 'STRUCTURE' ? 'Estrutura' : movement.tipo;
-  const displayValor = movement.cost ?? movement.valor;
+  const displayValor = movement.cost ?? movement.valor ?? 0;
   const displayComprador = movement.customer || movement.comprador;
-  const displayDataEntrada = movement.entryStockDate || movement.dataEntrada;
+  const displayDataEntrada = movement.entryStockDate || (movement.dataEntrada ?? '');
   const displayFornecedor = movement.vendor || movement.fornecedor;
   const displayDescricao = movement.description || movement.descricao;
   const displayImagem = movement.image || movement.imagem;

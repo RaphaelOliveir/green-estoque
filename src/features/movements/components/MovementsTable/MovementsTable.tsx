@@ -1,10 +1,23 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import type { Movement } from '../../types/movements.types';
+import type { InventoryUnit } from '@/shared/api/apiSlice';
+
+// Extends the API's InventoryUnit with optional legacy Portuguese-named fields
+// that older API responses may still include alongside the canonical camelCase names.
+type MovementRow = InventoryUnit & {
+  status: 'IN_STOCK' | 'INSTALLED' | 'EM_ESTOQUE' | 'INSTALADO' | string;
+  // legacy fields
+  produto?: string;
+  valor?: number;
+  dataEntrada?: string;
+  comprador?: string;
+  fornecedor?: string;
+  tipo?: 'Painel Solar' | 'Inversor' | 'Estrutura' | string;
+};
 
 interface MovementsTableProps {
-  movements: Movement[];
+  movements: MovementRow[];
 }
 
 function formatCurrency(value: number) {
@@ -47,11 +60,6 @@ const statusConfig: Record<string, { bg: string; text: string; label: string }> 
   INSTALLED: { bg: '#EFF8FF', text: '#175CD3', label: 'Instalado' },
 };
 
-const typeBadgeColors: Record<string, string> = {
-  'Painel Solar': '#F59E0B',
-  'Inversor': '#8B5CF6',
-  'Estrutura': '#06B6D4',
-};
 
 export function MovementsTable({ movements }: MovementsTableProps) {
   const router = useRouter();
@@ -79,7 +87,7 @@ export function MovementsTable({ movements }: MovementsTableProps) {
 
       {/* Table Rows */}
       <div className="divide-y divide-[#F0F1F3]">
-        {movements.map((mov: any) => {
+        {movements.map((mov) => {
           const statusStyle = statusConfig[mov.status] || { bg: '#F1F2F4', text: '#5D6679', label: mov.status === 'EM_ESTOQUE' ? 'Em estoque' : mov.status === 'INSTALADO' ? 'Instalado' : mov.status };
           
           return (
@@ -89,8 +97,8 @@ export function MovementsTable({ movements }: MovementsTableProps) {
               className="grid cursor-pointer grid-cols-[1.5fr_1fr_1.2fr_1.2fr_1.2fr_1fr_1fr] items-center px-5 py-[14px] transition-colors hover:bg-[#F9FAFB]"
             >
               <span className="text-sm font-medium text-[#48505E] truncate pr-2">{mov.name || mov.produto}</span>
-              <span className="text-sm font-medium text-[#48505E]">{formatCurrency(mov.cost ?? mov.valor)}</span>
-              <span className="text-sm text-[#48505E]">{formatDate(mov.entryStockDate || mov.dataEntrada)}</span>
+              <span className="text-sm font-medium text-[#48505E]">{formatCurrency(mov.cost ?? mov.valor ?? 0)}</span>
+              <span className="text-sm text-[#48505E]">{formatDate(mov.entryStockDate || (mov.dataEntrada ?? ''))}</span>
               <span className="text-sm text-[#48505E] truncate pr-2">{mov.customer || mov.comprador || '—'}</span>
               <span className="text-sm text-[#48505E] truncate pr-2">{mov.vendor || mov.fornecedor}</span>
               <span>

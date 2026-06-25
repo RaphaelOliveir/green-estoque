@@ -44,11 +44,11 @@ export function DashboardPage() {
   // Map best selling. Backend returns a single object: { productId, count, product: { ... } }
   // We need to pass an array to the TopSellingTable
   const topSelling = bestSellingData && bestSellingData.product ? [{
-    id: bestSellingData.productId,
-    nome: bestSellingData.product.name,
-    quantidadeVendida: bestSellingData.count || 0,
-    fornecedor: bestSellingData.product.vendor,
-    preco: bestSellingData.product.cost,
+    id: bestSellingData.productId ?? '',
+    nome: bestSellingData.product.name ?? '',
+    quantidadeVendida: bestSellingData.count ?? 0,
+    fornecedor: bestSellingData.product.vendor ?? '',
+    preco: bestSellingData.product.cost ?? 0,
   }] : [];
 
   return (
