@@ -3,15 +3,21 @@
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store/store';
-import type { Product } from '../../types/products.types';
+import type { Product } from '@/shared/api/apiSlice';
 
+// Extends the API's Product with optional legacy Portuguese-named fields
 type ProductRow = Product & {
-  name?: string;
-  cost?: number;
+  // legacy fields
+  nome?: string;
+  tipo?: string;
+  valor?: number;
+  comprador?: string;
+  dataEntrada?: string;
+  dataCompra?: string;
+  fornecedor?: string;
+  descricao?: string;
+  imagem?: string;
   entryStockDate?: string;
-  purchaseDate?: string;
-  vendor?: string;
-  type?: 'SOLAR_PANEL' | 'INVERTER' | 'STRUCTURE' | string;
 };
 
 interface ProductsTableProps {
@@ -110,7 +116,7 @@ export function ProductsTable({ products, onAddProduct }: ProductsTableProps) {
           >
             <span className="text-sm font-medium text-[#48505E]">{product.name || product.nome}</span>
             <span className="text-sm font-medium text-[#48505E]">
-              {formatCurrency(product.cost ?? product.valor)}
+              {formatCurrency(product.cost ?? (product.valor ?? 0))}
             </span>
             <span>
               <span
@@ -125,8 +131,8 @@ export function ProductsTable({ products, onAddProduct }: ProductsTableProps) {
                 {product.type === 'SOLAR_PANEL' ? 'Painel Solar' : product.type === 'INVERTER' ? 'Inversor' : product.type === 'STRUCTURE' ? 'Estrutura' : product.tipo}
               </span>
             </span>
-            <span className="text-sm text-[#48505E]">{formatDate(product.entryStockDate || product.dataEntrada)}</span>
-            <span className="text-sm text-[#48505E]">{formatDate(product.purchaseDate || product.dataCompra)}</span>
+            <span className="text-sm text-[#48505E]">{formatDate(product.entryStockDate ?? product.dataEntrada ?? '')}</span>
+            <span className="text-sm text-[#48505E]">{formatDate(product.purchaseDate ?? product.dataCompra ?? '')}</span>
             <span className="text-sm text-[#48505E]">{product.vendor || product.fornecedor}</span>
           </div>
         ))}

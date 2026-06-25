@@ -4,9 +4,26 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/features/dashboard/components/Sidebar/Sidebar';
 import { TopBar } from '@/features/dashboard/components/TopBar/TopBar';
-import { useGetProductByIdQuery, useUpdateProductMutation } from '@/shared/api/apiSlice';
+import { useGetProductByIdQuery, useUpdateProductMutation, type Product } from '@/shared/api/apiSlice';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store/store';
+
+// Extends Product with optional legacy Portuguese-named fields that some
+// API responses may still return alongside the canonical camelCase names.
+type ProductDetail = Product & {
+  nome?: string;
+  tipo?: string;
+  valor?: number;
+  comprador?: string;
+  dataEntrada?: string;
+  dataCompra?: string;
+  fornecedor?: string;
+  descricao?: string;
+  imagem?: string;
+  entryStockDate?: string;
+  purchaseDate?: string;
+  status?: string;
+};
 
 interface ProductDetailsPageProps {
   productId: string;
@@ -40,7 +57,8 @@ export function ProductDetailsPage({ productId }: ProductDetailsPageProps) {
   const user = useSelector((state: RootState) => state.auth.user);
   const isEngineering = user?.role === 'ENGINEERING';
   
-  const { data: product, isLoading, isError } = useGetProductByIdQuery(productId);
+  const { data: productData, isLoading, isError } = useGetProductByIdQuery(productId);
+  const product = productData as ProductDetail | undefined;
   const [updateProductMutation] = useUpdateProductMutation();
   
   const [isEditing, setIsEditing] = useState(false);
@@ -59,7 +77,7 @@ export function ProductDetailsPage({ productId }: ProductDetailsPageProps) {
     const sync = async () => {
       if (product) {
         setNome(product.name || product.nome || '');
-        setTipo(product.type === 'Painel Solar' ? 'SOLAR_PANEL' : product.type === 'Inversor' ? 'INVERTER' : product.type === 'Estrutura' ? 'STRUCTURE' : product.type || 'SOLAR_PANEL');
+        setTipo(product.tipo === 'Painel Solar' ? 'SOLAR_PANEL' : product.tipo === 'Inversor' ? 'INVERTER' : product.tipo === 'Estrutura' ? 'STRUCTURE' : product.type || 'SOLAR_PANEL');
         setValor(product.cost?.toString() || product.valor?.toString() || '');
         setComprador(product.customer || product.comprador || '');
         setDataEntrada(product.entryStockDate ? product.entryStockDate.split('T')[0] : product.dataEntrada || '');
@@ -131,10 +149,10 @@ export function ProductDetailsPage({ productId }: ProductDetailsPageProps) {
 
   const displayNome = product.name || product.nome;
   const displayTipo = product.type === 'SOLAR_PANEL' ? 'Painel Solar' : product.type === 'INVERTER' ? 'Inversor' : product.type === 'STRUCTURE' ? 'Estrutura' : product.tipo;
-  const displayValor = product.cost ?? product.valor;
+  const displayValor = product.cost ?? (product.valor ?? 0);
   const displayComprador = product.customer || product.comprador;
-  const displayDataEntrada = product.entryStockDate || product.dataEntrada;
-  const displayDataCompra = product.purchaseDate || product.dataCompra;
+  const displayDataEntrada = product.entryStockDate || (product.dataEntrada ?? '');
+  const displayDataCompra = product.purchaseDate || (product.dataCompra ?? '');
   const displayFornecedor = product.vendor || product.fornecedor;
   const displayDescricao = product.description || product.descricao;
   const displayImagem = product.image || product.imagem;

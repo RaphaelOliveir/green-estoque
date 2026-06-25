@@ -1,17 +1,19 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import type { Movement } from '../../types/movements.types';
+import type { InventoryUnit } from '@/shared/api/apiSlice';
 
-// API responses may include camelCase fields and legacy status strings alongside the local Portuguese-named fields
-type MovementRow = Omit<Movement, 'status'> & {
+// Extends the API's InventoryUnit with optional legacy Portuguese-named fields
+// that older API responses may still include alongside the canonical camelCase names.
+type MovementRow = InventoryUnit & {
   status: 'IN_STOCK' | 'INSTALLED' | 'EM_ESTOQUE' | 'INSTALADO' | string;
-  name?: string;
-  cost?: number;
-  entryStockDate?: string;
-  customer?: string;
-  vendor?: string;
-  type?: 'SOLAR_PANEL' | 'INVERTER' | 'STRUCTURE';
+  // legacy fields
+  produto?: string;
+  valor?: number;
+  dataEntrada?: string;
+  comprador?: string;
+  fornecedor?: string;
+  tipo?: 'Painel Solar' | 'Inversor' | 'Estrutura' | string;
 };
 
 interface MovementsTableProps {
@@ -95,8 +97,8 @@ export function MovementsTable({ movements }: MovementsTableProps) {
               className="grid cursor-pointer grid-cols-[1.5fr_1fr_1.2fr_1.2fr_1.2fr_1fr_1fr] items-center px-5 py-[14px] transition-colors hover:bg-[#F9FAFB]"
             >
               <span className="text-sm font-medium text-[#48505E] truncate pr-2">{mov.name || mov.produto}</span>
-              <span className="text-sm font-medium text-[#48505E]">{formatCurrency(mov.cost ?? mov.valor)}</span>
-              <span className="text-sm text-[#48505E]">{formatDate(mov.entryStockDate || mov.dataEntrada)}</span>
+              <span className="text-sm font-medium text-[#48505E]">{formatCurrency(mov.cost ?? mov.valor ?? 0)}</span>
+              <span className="text-sm text-[#48505E]">{formatDate(mov.entryStockDate || (mov.dataEntrada ?? ''))}</span>
               <span className="text-sm text-[#48505E] truncate pr-2">{mov.customer || mov.comprador || '—'}</span>
               <span className="text-sm text-[#48505E] truncate pr-2">{mov.vendor || mov.fornecedor}</span>
               <span>
