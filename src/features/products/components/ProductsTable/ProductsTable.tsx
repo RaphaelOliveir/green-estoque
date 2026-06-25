@@ -5,8 +5,17 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '@/store/store';
 import type { Product } from '../../types/products.types';
 
+type ProductRow = Product & {
+  name?: string;
+  cost?: number;
+  entryStockDate?: string;
+  purchaseDate?: string;
+  vendor?: string;
+  type?: 'SOLAR_PANEL' | 'INVERTER' | 'STRUCTURE' | string;
+};
+
 interface ProductsTableProps {
-  products: Product[];
+  products: ProductRow[];
   onAddProduct?: () => void;
 }
 
@@ -52,12 +61,6 @@ const TABLE_HEADERS = [
   { key: 'fornecedor', label: 'Fornecedor' },
 ];
 
-const typeBadgeColors: Record<string, string> = {
-  'Painel Solar': '#F59E0B',
-  'Inversor': '#8B5CF6',
-  'Estrutura': '#06B6D4',
-};
-
 export function ProductsTable({ products, onAddProduct }: ProductsTableProps) {
   const router = useRouter();
   const user = useSelector((state: RootState) => state.auth.user);
@@ -99,7 +102,7 @@ export function ProductsTable({ products, onAddProduct }: ProductsTableProps) {
 
       {/* Table Rows */}
       <div className="divide-y divide-[#F0F1F3]">
-        {products.map((product: any) => (
+        {products.map((product: ProductRow) => (
           <div
             key={product.id}
             onClick={() => router.push(`/products/${product.id}`)}

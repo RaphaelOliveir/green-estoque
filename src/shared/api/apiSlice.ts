@@ -26,6 +26,25 @@ export type InventoryUnit = {
 
 export type UpdateItemStatusDto = components['schemas']['UpdateItemStatusDto'];
 
+export interface PaginatedResponse<T> {
+  data: T[];
+  total?: number;
+  page?: number;
+  limit?: number;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
+export interface LoginResponse {
+  access_token: string;
+  user: User;
+}
+
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
@@ -42,18 +61,18 @@ export const apiSlice = createApi({
   tagTypes: ['Products', 'Movements', 'Dashboard'],
   endpoints: (builder) => ({
     // --- Products ---
-    getProducts: builder.query<any, { search?: string; vendor?: string; type?: string; page?: number; limit?: number }>({
+    getProducts: builder.query<Product[] | PaginatedResponse<Product>, { search?: string; vendor?: string; type?: string; page?: number; limit?: number }>({
       query: (params) => ({
         url: '/products',
         params,
       }),
       providesTags: ['Products'],
     }),
-    getProductById: builder.query<any, string>({
+    getProductById: builder.query<Product, string>({
       query: (id) => `/products/${id}`,
       providesTags: (result, error, id) => [{ type: 'Products', id }],
     }),
-    createProduct: builder.mutation<any, CreateProductDto>({
+    createProduct: builder.mutation<Product, CreateProductDto>({
       query: (body) => ({
         url: '/products',
         method: 'POST',
@@ -61,7 +80,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Products', 'Movements', 'Dashboard'],
     }),
-    updateProduct: builder.mutation<any, { id: string; data: UpdateProductDto }>({
+    updateProduct: builder.mutation<Product, { id: string; data: UpdateProductDto }>({
       query: ({ id, data }) => ({
         url: `/products/${id}`,
         method: 'PATCH',
@@ -69,7 +88,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: (result, error, { id }) => [{ type: 'Products', id }, 'Products', 'Movements', 'Dashboard'],
     }),
-    deleteProduct: builder.mutation<any, string>({
+    deleteProduct: builder.mutation<unknown, string>({
       query: (id) => ({
         url: `/products/${id}`,
         method: 'DELETE',
@@ -78,18 +97,18 @@ export const apiSlice = createApi({
     }),
 
     // --- Movements / Inventory Units ---
-    getInventoryUnits: builder.query<any, { productId?: string; status?: string; limit?: number; page?: number }>({
+    getInventoryUnits: builder.query<InventoryUnit[] | PaginatedResponse<InventoryUnit>, { productId?: string; status?: string; limit?: number; page?: number }>({
       query: (params) => ({
         url: '/inventory/units',
         params,
       }),
       providesTags: ['Movements'],
     }),
-    getInventoryUnitById: builder.query<any, string>({
+    getInventoryUnitById: builder.query<InventoryUnit, string>({
       query: (id) => `/inventory/items/${id}`,
       providesTags: (result, error, id) => [{ type: 'Movements', id }],
     }),
-    updateInventoryUnitStatus: builder.mutation<any, { id: string; data: UpdateItemStatusDto }>({
+    updateInventoryUnitStatus: builder.mutation<InventoryUnit, { id: string; data: UpdateItemStatusDto }>({
       query: ({ id, data }) => ({
         url: `/inventory/items/${id}`,
         method: 'PATCH',
@@ -99,38 +118,38 @@ export const apiSlice = createApi({
     }),
 
     // --- Dashboard / Reports ---
-    getStockReport: builder.query<any, void>({
+    getStockReport: builder.query<unknown, void>({
       query: () => '/reports/stock',
       providesTags: ['Dashboard'],
     }),
-    getOverview: builder.query<any, void>({
+    getOverview: builder.query<{ inStock?: number; installed?: number }, void>({
       query: () => '/reports/overview',
       providesTags: ['Dashboard'],
     }),
-    getBestSelling: builder.query<any, void>({
+    getBestSelling: builder.query<{ productId?: string; count?: number; product?: { name?: string; vendor?: string; cost?: number } }, void>({
       query: () => '/reports/best-selling',
       providesTags: ['Dashboard'],
     }),
-    getTimeline: builder.query<any, { period: 'weekly' | 'monthly' | 'yearly'; startDate?: string; endDate?: string }>({
+    getTimeline: builder.query<Array<{ periodLabel?: string; inStock?: number; installed?: number }>, { period: 'weekly' | 'monthly' | 'yearly'; startDate?: string; endDate?: string }>({
       query: (params) => ({
         url: '/reports/timeline',
         params,
       }),
       providesTags: ['Dashboard'],
     }),
-    getStockByType: builder.query<any, void>({
+    getStockByType: builder.query<{ solarPanel?: number; inverter?: number; structure?: number }, void>({
       query: () => '/reports/stock-by-type',
       providesTags: ['Dashboard'],
     }),
     // --- Auth ---
-    login: builder.mutation<any, any>({
+    login: builder.mutation<LoginResponse, components['schemas']['LoginDto']>({
       query: (credentials) => ({
         url: '/auth/login',
         method: 'POST',
         body: credentials,
       }),
     }),
-    registerUser: builder.mutation<any, any>({
+    registerUser: builder.mutation<unknown, components['schemas']['CreateUserDto'] & { role?: string }>({
       query: (userData) => ({
         url: '/users',
         method: 'POST',

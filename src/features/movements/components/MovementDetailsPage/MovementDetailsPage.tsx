@@ -53,9 +53,12 @@ export function MovementDetailsPage({ movementId }: MovementDetailsPageProps) {
   const [status, setStatus] = useState<MovementStatus>('IN_STOCK');
 
   useEffect(() => {
-    if (movement) {
-      setStatus(movement.status === 'EM_ESTOQUE' ? 'IN_STOCK' : movement.status === 'INSTALADO' ? 'INSTALLED' : movement.status || 'IN_STOCK');
-    }
+    const sync = async () => {
+      if (movement) {
+        setStatus(movement.status === 'EM_ESTOQUE' ? 'IN_STOCK' : movement.status === 'INSTALADO' ? 'INSTALLED' : movement.status || 'IN_STOCK');
+      }
+    };
+    sync();
   }, [movement]);
 
   if (isLoading) {
@@ -117,9 +120,9 @@ export function MovementDetailsPage({ movementId }: MovementDetailsPageProps) {
     try {
       await deleteProductMutation(movement.productId).unwrap();
       router.push('/movements');
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to delete product', err);
-      alert(err?.data?.message || 'Erro ao excluir o produto. Verifique se ele não possui unidades instaladas.');
+      alert((err as { data?: { message?: string } })?.data?.message || 'Erro ao excluir o produto. Verifique se ele não possui unidades instaladas.');
     }
   };
 

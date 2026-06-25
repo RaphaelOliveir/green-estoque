@@ -9,18 +9,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userStr = localStorage.getItem('user');
+    const init = async () => {
+      const token = localStorage.getItem('token');
+      const userStr = localStorage.getItem('user');
 
-    if (token && userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        dispatch(setCredentials({ user, access_token: token }));
-      } catch (e) {
-        console.error('Failed to parse user from local storage');
+      if (token && userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          dispatch(setCredentials({ user, access_token: token }));
+        } catch {
+          console.error('Failed to parse user from local storage');
+        }
       }
-    }
-    setIsLoaded(true);
+      setIsLoaded(true);
+    };
+    init();
   }, [dispatch]);
 
   if (!isLoaded) {

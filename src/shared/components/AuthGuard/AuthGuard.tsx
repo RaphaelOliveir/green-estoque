@@ -8,12 +8,15 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/');
-    } else {
-      setIsAuthorized(true);
-    }
+    const check = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/');
+      } else {
+        setIsAuthorized(true);
+      }
+    };
+    check();
   }, [router]);
 
   if (!isAuthorized) {

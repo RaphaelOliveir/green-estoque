@@ -3,8 +3,19 @@
 import { useRouter } from 'next/navigation';
 import type { Movement } from '../../types/movements.types';
 
+// API responses may include camelCase fields and legacy status strings alongside the local Portuguese-named fields
+type MovementRow = Omit<Movement, 'status'> & {
+  status: 'IN_STOCK' | 'INSTALLED' | 'EM_ESTOQUE' | 'INSTALADO' | string;
+  name?: string;
+  cost?: number;
+  entryStockDate?: string;
+  customer?: string;
+  vendor?: string;
+  type?: 'SOLAR_PANEL' | 'INVERTER' | 'STRUCTURE';
+};
+
 interface MovementsTableProps {
-  movements: Movement[];
+  movements: MovementRow[];
 }
 
 function formatCurrency(value: number) {
@@ -47,11 +58,6 @@ const statusConfig: Record<string, { bg: string; text: string; label: string }> 
   INSTALLED: { bg: '#EFF8FF', text: '#175CD3', label: 'Instalado' },
 };
 
-const typeBadgeColors: Record<string, string> = {
-  'Painel Solar': '#F59E0B',
-  'Inversor': '#8B5CF6',
-  'Estrutura': '#06B6D4',
-};
 
 export function MovementsTable({ movements }: MovementsTableProps) {
   const router = useRouter();
@@ -79,7 +85,7 @@ export function MovementsTable({ movements }: MovementsTableProps) {
 
       {/* Table Rows */}
       <div className="divide-y divide-[#F0F1F3]">
-        {movements.map((mov: any) => {
+        {movements.map((mov) => {
           const statusStyle = statusConfig[mov.status] || { bg: '#F1F2F4', text: '#5D6679', label: mov.status === 'EM_ESTOQUE' ? 'Em estoque' : mov.status === 'INSTALADO' ? 'Instalado' : mov.status };
           
           return (

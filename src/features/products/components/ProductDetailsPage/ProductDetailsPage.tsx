@@ -56,16 +56,19 @@ export function ProductDetailsPage({ productId }: ProductDetailsPageProps) {
   const [descricao, setDescricao] = useState('');
 
   useEffect(() => {
-    if (product) {
-      setNome(product.name || product.nome || '');
-      setTipo(product.type === 'Painel Solar' ? 'SOLAR_PANEL' : product.type === 'Inversor' ? 'INVERTER' : product.type === 'Estrutura' ? 'STRUCTURE' : product.type || 'SOLAR_PANEL');
-      setValor(product.cost?.toString() || product.valor?.toString() || '');
-      setComprador(product.customer || product.comprador || '');
-      setDataEntrada(product.entryStockDate ? product.entryStockDate.split('T')[0] : product.dataEntrada || '');
-      setDataCompra(product.purchaseDate ? product.purchaseDate.split('T')[0] : product.dataCompra || '');
-      setFornecedor(product.vendor || product.fornecedor || '');
-      setDescricao(product.description || product.descricao || '');
-    }
+    const sync = async () => {
+      if (product) {
+        setNome(product.name || product.nome || '');
+        setTipo(product.type === 'Painel Solar' ? 'SOLAR_PANEL' : product.type === 'Inversor' ? 'INVERTER' : product.type === 'Estrutura' ? 'STRUCTURE' : product.type || 'SOLAR_PANEL');
+        setValor(product.cost?.toString() || product.valor?.toString() || '');
+        setComprador(product.customer || product.comprador || '');
+        setDataEntrada(product.entryStockDate ? product.entryStockDate.split('T')[0] : product.dataEntrada || '');
+        setDataCompra(product.purchaseDate ? product.purchaseDate.split('T')[0] : product.dataCompra || '');
+        setFornecedor(product.vendor || product.fornecedor || '');
+        setDescricao(product.description || product.descricao || '');
+      }
+    };
+    sync();
   }, [product]);
 
   if (isLoading) {
@@ -111,7 +114,7 @@ export function ProductDetailsPage({ productId }: ProductDetailsPageProps) {
         id: productId,
         data: {
           name: nome,
-          type: tipo as any,
+          type: tipo as 'SOLAR_PANEL' | 'INVERTER' | 'STRUCTURE',
           cost: Number(valor),
           customer: comprador,
           purchaseDate: dataCompra ? new Date(dataCompra).toISOString() : undefined,
