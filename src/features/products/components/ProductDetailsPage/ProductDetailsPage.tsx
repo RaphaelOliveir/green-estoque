@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/features/dashboard/components/Sidebar/Sidebar';
 import { TopBar } from '@/features/dashboard/components/TopBar/TopBar';
 import { useGetProductByIdQuery, useUpdateProductMutation } from '@/shared/api/apiSlice';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/store/store';
 
 interface ProductDetailsPageProps {
   productId: string;
@@ -35,6 +37,8 @@ function formatDate(date: string) {
 
 export function ProductDetailsPage({ productId }: ProductDetailsPageProps) {
   const router = useRouter();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const isEngineering = user?.role === 'ENGINEERING';
   
   const { data: product, isLoading, isError } = useGetProductByIdQuery(productId);
   const [updateProductMutation] = useUpdateProductMutation();
@@ -171,7 +175,7 @@ export function ProductDetailsPage({ productId }: ProductDetailsPageProps) {
                     Salvar
                   </button>
                 </div>
-              ) : (
+              ) : isEngineering && (
                 <button
                   onClick={() => setIsEditing(true)}
                   className="flex h-10 items-center gap-2 rounded-lg border border-[#D0D3D9] bg-white px-4 text-sm font-medium text-[#5D6679] shadow-sm transition-all hover:bg-gray-50 active:translate-y-px"

@@ -1,6 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/store/store';
 import type { Product } from '../../types/products.types';
 
 interface ProductsTableProps {
@@ -58,6 +60,8 @@ const typeBadgeColors: Record<string, string> = {
 
 export function ProductsTable({ products, onAddProduct }: ProductsTableProps) {
   const router = useRouter();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const isEngineering = user?.role === 'ENGINEERING';
 
   return (
     <div className="rounded-xl bg-white shadow-sm">
@@ -70,17 +74,17 @@ export function ProductsTable({ products, onAddProduct }: ProductsTableProps) {
 
         <div className="flex items-center gap-3">
           {/* Add Product */}
-          <button
-            type="button"
-            id="btn-adicionar-produto"
-            onClick={onAddProduct}
-            className="flex h-9 items-center gap-2 rounded-lg bg-[#1366D9] px-4 text-sm font-medium text-white transition-all hover:bg-[#1157B5] active:translate-y-px"
-          >
-            <PlusIcon />
-            Adicionar Produto
-          </button>
-
-
+          {isEngineering && (
+            <button
+              type="button"
+              id="btn-adicionar-produto"
+              onClick={onAddProduct}
+              className="flex h-9 items-center gap-2 rounded-lg bg-[#1366D9] px-4 text-sm font-medium text-white transition-all hover:bg-[#1157B5] active:translate-y-px"
+            >
+              <PlusIcon />
+              Adicionar Produto
+            </button>
+          )}
         </div>
       </div>
 

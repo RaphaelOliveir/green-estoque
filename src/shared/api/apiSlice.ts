@@ -29,7 +29,7 @@ export type UpdateItemStatusDto = components['schemas']['UpdateItemStatusDto'];
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || 'https://green-estoque-api.vercel.app',
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || 'https://green-estoque-api.vercel.app/api/v1',
     prepareHeaders: (headers) => {
       // In a real app, you might get the token from state or localStorage
       const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -44,18 +44,18 @@ export const apiSlice = createApi({
     // --- Products ---
     getProducts: builder.query<any, { search?: string; vendor?: string; type?: string; page?: number; limit?: number }>({
       query: (params) => ({
-        url: '/api/v1/products',
+        url: '/products',
         params,
       }),
       providesTags: ['Products'],
     }),
     getProductById: builder.query<any, string>({
-      query: (id) => `/api/v1/products/${id}`,
+      query: (id) => `/products/${id}`,
       providesTags: (result, error, id) => [{ type: 'Products', id }],
     }),
     createProduct: builder.mutation<any, CreateProductDto>({
       query: (body) => ({
-        url: '/api/v1/products',
+        url: '/products',
         method: 'POST',
         body,
       }),
@@ -63,7 +63,7 @@ export const apiSlice = createApi({
     }),
     updateProduct: builder.mutation<any, { id: string; data: UpdateProductDto }>({
       query: ({ id, data }) => ({
-        url: `/api/v1/products/${id}`,
+        url: `/products/${id}`,
         method: 'PATCH',
         body: data,
       }),
@@ -71,7 +71,7 @@ export const apiSlice = createApi({
     }),
     deleteProduct: builder.mutation<any, string>({
       query: (id) => ({
-        url: `/api/v1/products/${id}`,
+        url: `/products/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Products', 'Movements', 'Dashboard'],
@@ -80,18 +80,18 @@ export const apiSlice = createApi({
     // --- Movements / Inventory Units ---
     getInventoryUnits: builder.query<any, { productId?: string; status?: string; limit?: number; page?: number }>({
       query: (params) => ({
-        url: '/api/v1/inventory/units',
+        url: '/inventory/units',
         params,
       }),
       providesTags: ['Movements'],
     }),
     getInventoryUnitById: builder.query<any, string>({
-      query: (id) => `/api/v1/inventory/items/${id}`,
+      query: (id) => `/inventory/items/${id}`,
       providesTags: (result, error, id) => [{ type: 'Movements', id }],
     }),
     updateInventoryUnitStatus: builder.mutation<any, { id: string; data: UpdateItemStatusDto }>({
       query: ({ id, data }) => ({
-        url: `/api/v1/inventory/items/${id}`,
+        url: `/inventory/items/${id}`,
         method: 'PATCH',
         body: data,
       }),
@@ -100,39 +100,39 @@ export const apiSlice = createApi({
 
     // --- Dashboard / Reports ---
     getStockReport: builder.query<any, void>({
-      query: () => '/api/v1/reports/stock',
+      query: () => '/reports/stock',
       providesTags: ['Dashboard'],
     }),
     getOverview: builder.query<any, void>({
-      query: () => '/api/v1/reports/overview',
+      query: () => '/reports/overview',
       providesTags: ['Dashboard'],
     }),
     getBestSelling: builder.query<any, void>({
-      query: () => '/api/v1/reports/best-selling',
+      query: () => '/reports/best-selling',
       providesTags: ['Dashboard'],
     }),
     getTimeline: builder.query<any, { period: 'weekly' | 'monthly' | 'yearly'; startDate?: string; endDate?: string }>({
       query: (params) => ({
-        url: '/api/v1/reports/timeline',
+        url: '/reports/timeline',
         params,
       }),
       providesTags: ['Dashboard'],
     }),
     getStockByType: builder.query<any, void>({
-      query: () => '/api/v1/reports/stock-by-type',
+      query: () => '/reports/stock-by-type',
       providesTags: ['Dashboard'],
     }),
     // --- Auth ---
     login: builder.mutation<any, any>({
       query: (credentials) => ({
-        url: '/api/v1/auth/login',
+        url: '/auth/login',
         method: 'POST',
         body: credentials,
       }),
     }),
     registerUser: builder.mutation<any, any>({
       query: (userData) => ({
-        url: '/api/v1/users',
+        url: '/users',
         method: 'POST',
         body: userData,
       }),

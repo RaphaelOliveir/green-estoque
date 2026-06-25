@@ -9,6 +9,8 @@ import {
   useUpdateInventoryUnitStatusMutation,
   useDeleteProductMutation 
 } from '@/shared/api/apiSlice';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/store/store';
 import type { MovementStatus } from '../../types/movements.types';
 
 interface MovementDetailsPageProps {
@@ -40,6 +42,8 @@ function formatDate(date: string) {
 
 export function MovementDetailsPage({ movementId }: MovementDetailsPageProps) {
   const router = useRouter();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const isEngineering = user?.role === 'ENGINEERING';
   
   const { data: movement, isLoading, isError } = useGetInventoryUnitByIdQuery(movementId);
   const [updateStatusMutation] = useUpdateInventoryUnitStatusMutation();
@@ -169,7 +173,7 @@ export function MovementDetailsPage({ movementId }: MovementDetailsPageProps) {
                     Salvar
                   </button>
                 </div>
-              ) : (
+              ) : isEngineering && (
                 <div className="flex gap-2">
                   <button
                     onClick={handleDeleteProduct}

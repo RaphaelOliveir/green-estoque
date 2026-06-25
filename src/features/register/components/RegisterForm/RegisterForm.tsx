@@ -3,7 +3,9 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
 import { useRegisterUserMutation, useLoginMutation } from '@/shared/api/apiSlice';
+import { setCredentials } from '../../../auth/authSlice';
 
 export function RegisterForm() {
   const router = useRouter();
@@ -13,7 +15,9 @@ export function RegisterForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('ENGINEERING');
   const [error, setError] = useState('');
+  const dispatch = useDispatch();
 
   const isLoading = isRegistering || isLoggingIn;
 
@@ -27,11 +31,13 @@ export function RegisterForm() {
     }
 
     try {
-      await registerMutation({ name, email, password }).unwrap();
+      await registerMutation({ name, email, password, role }).unwrap();
       // Auto-login after successful registration
       const loginResponse = await loginMutation({ email, password }).unwrap();
       if (loginResponse.access_token) {
         localStorage.setItem('token', loginResponse.access_token);
+        localStorage.setItem('user', JSON.stringify(loginResponse.user));
+        dispatch(setCredentials({ user: loginResponse.user, access_token: loginResponse.access_token }));
         router.push('/dashboard');
       } else {
         router.push('/');
@@ -88,6 +94,22 @@ export function RegisterForm() {
             />
           </div>
           <p className="mt-1 text-sm text-text-muted">A senha deve ter no mínimo 8 caracteres.</p>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium leading-5 text-text-secondary" htmlFor="role">Papel do Usuário</label>
+          <div className="flex h-11 w-full items-center rounded-lg border border-border bg-white px-3.5 py-2.5 shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] transition-colors focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10">
+            <select 
+              id="role"
+              className="w-full bg-transparent text-base leading-6 text-text-main outline-none"
+              value={role}
+              onChange={e => setRole(e.target.value)}
+              disabled={isLoading}
+            >
+              <option value="ENGINEERING">Engenharia</option>
+              <option value="FINANCE">Financeiro</option>
+            </select>
+          </div>
         </div>
         
         {error && <span className="text-sm text-red-500">{error}</span>}

@@ -5,8 +5,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLoginMutation } from '@/shared/api/apiSlice';
 
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '@/features/auth/authSlice';
+
 export function LoginForm() {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [loginMutation, { isLoading }] = useLoginMutation();
   
   const [email, setEmail] = useState('');
@@ -24,8 +28,10 @@ export function LoginForm() {
 
     try {
       const response = await loginMutation({ email, password }).unwrap();
-      if (response.access_token) {
+      if (response.access_token && response.user) {
         localStorage.setItem('token', response.access_token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        dispatch(setCredentials({ user: response.user, access_token: response.access_token }));
         router.push('/dashboard');
       } else {
         setError('Erro ao efetuar login. Token não recebido.');
